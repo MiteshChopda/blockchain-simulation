@@ -17,12 +17,12 @@ export default function Hash() {
   };
 
   return (
-    <div className="flex flex-col justify-center">
-      <h1 className="self-center font-bold">
+    <div className="flex flex-col justify-center p-4">
+      <h1 className="text-center font-bold text-lg">
         SHA256 hash
       </h1>
 
-      <div className="justify-center p-2 flex flex-col gap-2 m-auto min-w-96">
+      <div className="justify-center flex flex-col gap-2 m-auto min-w-96">
         <label htmlFor="hash_data">Data:</label>
         <textarea
           id="hash_data"
