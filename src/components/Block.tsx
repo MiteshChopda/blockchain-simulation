@@ -9,7 +9,7 @@ export default function Block() {
   const [blockNo, setBlockNo] = useState<number>(1);
   const [nonce, setNonce] = useState<number>(0);
   const [data, setData] = useState<string>("");
-  const [previousHash, _setPreviousHash] = useState<string>(GENESIS_PREV_HASH);
+  const [previousHash] = useState<string>(GENESIS_PREV_HASH);
   const [hash, setHash] = useState<string>("");
 
   const handleMine = async () => {
