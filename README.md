@@ -1,73 +1,89 @@
-# React + TypeScript + Vite
+# Blockchain Simulation (React + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive **blockchain simulator** built with **React**, **TypeScript**, **Vite**, and **Tailwind CSS**.  
+This project is designed for **educational purposes** to visually demonstrate how hashing, blocks, mining, and blockchains work at a fundamental level.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Features
 
-## React Compiler
+### 1. SHA-256 Hash Playground
+- Enter any text and instantly see its SHA-256 hash.
+- Demonstrates how **small input changes produce completely different hashes**.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 2. Single Block Simulator
+- Manually edit:
+  - Block number
+  - Data
+  - Nonce
+  - Previous hash
+- Mine the block using a **Proof-of-Work** algorithm.
+- Shows how the nonce is adjusted until the hash meets the difficulty requirement.
 
-## Expanding the ESLint configuration
+### 3. Blockchain Simulator
+- Create a chain of blocks starting from a **Genesis Block**.
+- Edit block data or nonce and observe how it **breaks the chain**.
+- Mine individual blocks and see how:
+  - Hashes are recalculated
+  - Changes propagate forward
+- Full chain validation:
+  - Hash correctness
+  - Difficulty requirement
+  - Previous-hash linkage
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🧠 Concepts Demonstrated
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Cryptographic hashing (SHA-256)
+- Proof of Work (PoW)
+- Mining and nonce discovery
+- Block immutability
+- Chain validation
+- Hash dependency between blocks
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+> ⚠️ This is **not** a real blockchain or consensus system.
+
+---
+
+## 🛠 Tech Stack
+
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS
+- Web Crypto API
+
+---
+
+## 📁 Project Structure
+
+```
+src
+├── App.tsx
+├── main.tsx
+├── style.css
+├── types.ts
+│
+├── components
+│   ├── Navbar.tsx
+│   ├── Home.tsx
+│   ├── Hash.tsx
+│   ├── Block.tsx
+│   └── Blockchain.tsx
+│
+└── utils
+    ├── hash.ts
+    └── mineBlock.ts
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🚀 Getting Started
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
+
+---
