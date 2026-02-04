@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { mineBlock } from "../utils/mineBlock";
 
-const DIFFICULTY = 4;
+const DIFFICULTY = 5;
 const GENESIS_PREV_HASH = "0".repeat(64);
 
 export default function Block() {
