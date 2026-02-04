@@ -16,7 +16,7 @@ export default function Home() {
       case "hash":
         return <Hash />;
       case "block":
-        return <Block />;
+        return <Block block={{ blockNo: 69, data: "", nonce: 69, previousHash: "0".repeat(64) }} />;
       case "blockchain":
         return <Blockchain />;
       case "transaction":

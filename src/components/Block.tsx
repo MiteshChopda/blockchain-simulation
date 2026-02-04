@@ -6,11 +6,18 @@ import { sha256 } from "../utils/hash";
 const DIFFICULTY = 4;
 const GENESIS_PREV_HASH = "0".repeat(64);
 
-export default function Block() {
-  const [blockNo, setBlockNo] = useState<number>(1);
-  const [nonce, setNonce] = useState<number>(0);
-  const [data, setData] = useState<string>("");
-  const [previousHash] = useState<string>(GENESIS_PREV_HASH);
+export type blockDataType = {
+  blockNo: number;
+  nonce: number;
+  data: string;
+  previousHash: string;
+}
+
+export default function Block({ block }: { block: blockDataType }) {
+  const [blockNo, setBlockNo] = useState<number>(block.blockNo || 1);
+  const [nonce, setNonce] = useState<number>(block.nonce || 0);
+  const [data, setData] = useState<string>(block.data || "");
+  const [previousHash] = useState<string>(block.previousHash || GENESIS_PREV_HASH);
   const [hash, setHash] = useState<string>("");
 
   useEffect(() => {
