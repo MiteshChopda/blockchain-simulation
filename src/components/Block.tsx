@@ -1,8 +1,9 @@
 
 import { useState } from "react";
 import { mineBlock } from "../utils/mineBlock";
+import { sha256 } from "../utils/hash";
 
-const DIFFICULTY = 5;
+const DIFFICULTY = 4;
 const GENESIS_PREV_HASH = "0".repeat(64);
 
 export default function Block() {
@@ -11,6 +12,32 @@ export default function Block() {
   const [data, setData] = useState<string>("");
   const [previousHash] = useState<string>(GENESIS_PREV_HASH);
   const [hash, setHash] = useState<string>("");
+
+  const handleChange = async (
+    e: React.ChangeEvent<any>
+  ) => {
+    const element = e.target.id;
+    const value = e.target.value;
+
+    switch (element) {
+      case "blockNo":
+        setBlockNo(Number(value))
+        break
+      case "nonce":
+        setNonce(Number(value))
+        break
+      case "data":
+        setData(value)
+        break
+      default:
+        break;
+    }
+
+    const input = `${blockNo}${nonce}${data}${previousHash}`;
+    const result = await sha256(input);
+    setHash(result);
+  };
+
 
   const handleMine = async () => {
     const { nonce: minedNonce, hash: minedHash } =
@@ -36,18 +63,10 @@ export default function Block() {
         <label>
           Block No:
           <input
+            id="blockNo"
             type="number"
             value={blockNo}
-            onChange={(e) => setBlockNo(Number(e.target.value))}
-            className="bg-amber-50 border-2 p-2 border-gray-400 rounded-xl w-full"
-          />
-        </label>
-
-        <label>
-          Data:
-          <textarea
-            value={data}
-            onChange={(e) => setData(e.target.value)}
+            onChange={handleChange}
             className="bg-amber-50 border-2 p-2 border-gray-400 rounded-xl w-full"
           />
         </label>
@@ -55,12 +74,24 @@ export default function Block() {
         <label>
           Nonce:
           <input
+            id="nonce"
             type="number"
             value={nonce}
-            onChange={(e) => setNonce(Number(e.target.value))}
+            onChange={handleChange}
             className="bg-amber-50 border-2 p-2 border-gray-400 rounded-xl w-full"
           />
         </label>
+
+        <label>
+          Data:
+          <textarea
+            id="data"
+            value={data}
+            onChange={handleChange}
+            className="bg-amber-50 border-2 p-2 border-gray-400 rounded-xl w-full"
+          />
+        </label>
+
 
         <label>
           Previous Hash:
