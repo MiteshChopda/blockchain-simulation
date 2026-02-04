@@ -18,7 +18,7 @@ export default function Block() {
       return
     }
     const input = `${blockNo}${nonce}${data}${previousHash}`;
-    const result = sha256(input).then((data) => setHash(data))
+    sha256(input).then((data) => setHash(data))
   }, [data])
 
   const handleChange = async (
