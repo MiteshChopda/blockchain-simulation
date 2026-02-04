@@ -1,78 +1,45 @@
 
 import { useEffect, useState } from "react";
+import Block, { type BlockSnapshot } from "./Block";
 import { sha256 } from "../utils/hash";
-import { mineBlock } from "../utils/mineBlock";
-
-type Block = {
-  blockNo: number;
-  nonce: number;
-  data: string;
-  hash: string;
-  previousHash: string;
-};
 
 const DIFFICULTY = 4;
 const GENESIS_PREV_HASH = "0".repeat(64);
 
-export default function Blockchain() {
-  const [chain, setChain] = useState<Block[]>([
-    {
-      blockNo: 1,
-      nonce: 0,
-      data: "Genesis Block",
-      previousHash: GENESIS_PREV_HASH,
-      hash: "",
-    },
-  ]);
 
-  // add new block
+export default function Blockchain() {
+  const [chain, setChain] = useState<BlockSnapshot[]>([{ blockNo: 1, data: "Genesis Block", nonce: 69, previousHash: GENESIS_PREV_HASH, hash: "" }])
+
+
+  const handleBlockUpdate = (index: number, snapshot: BlockSnapshot) => {
+    const updated = [...chain]
+    updated[index] = snapshot
+
+    // propagate previousHash forward
+    for (let i = index + 1; i < updated.length; i++) {
+      updated[i] = {
+        ...updated[i],
+        previousHash: updated[i - 1].hash,
+      }
+    }
+
+    setChain(updated)
+  }
+
   const addBlock = () => {
     const last = chain[chain.length - 1];
+    console.log(chain);
+
     setChain([
       ...chain,
       {
         blockNo: chain.length + 1,
         nonce: 0,
         data: "",
-        previousHash: last.hash,
+        previousHash: last.hash || "0".repeat(64),
         hash: "",
       },
     ]);
-  };
-
-  // update editable fields
-  const updateBlock = (
-    index: number,
-    field: "data" | "nonce",
-    value: string | number
-  ) => {
-    const updated = [...chain];
-    // @ts-expect-error controlled
-    updated[index][field] = value;
-    setChain(updated);
-  };
-
-  // mine a specific block
-  const mineAtIndex = async (index: number) => {
-    const block = chain[index];
-
-    const { nonce, hash } = await mineBlock(
-      block.blockNo,
-      block.data,
-      block.previousHash,
-      DIFFICULTY,
-      block.nonce
-    );
-
-    const updated = [...chain];
-    updated[index] = { ...block, nonce, hash };
-
-    // propagate previousHash forward
-    for (let i = index + 1; i < updated.length; i++) {
-      updated[i].previousHash = updated[i - 1].hash;
-    }
-
-    setChain(updated);
   };
 
   // FULL chain validation (includes difficulty)
@@ -112,70 +79,22 @@ export default function Blockchain() {
 
       {chain.map((block, index) => {
         const valid = validity[index];
-
         return (
-          <div
+
+          < div
             key={index}
-            className={`p-4 border-2 rounded-3xl m-auto ${valid
+            className={`rounded-3xl ${valid
               ? "bg-green-100 border-transparent"
               : "bg-red-100 border-transparent"
-              }`}
+              }
+              }`
+            }
           >
-            <h2 className="font-semibold mb-2">
-              Block #{block.blockNo}
-            </h2>
-
-            <div className="flex flex-col gap-2 text-sm">
-              <label>
-                Data:
-                <textarea
-                  value={block.data}
-                  onChange={(e) =>
-                    updateBlock(index, "data", e.target.value)
-                  }
-                  className="bg-amber-50 border-2 p-2 border-gray-400 rounded-xl w-full"
-                />
-              </label>
-
-              <label>
-                Nonce:
-                <input
-                  type="number"
-                  value={block.nonce}
-                  onChange={(e) =>
-                    updateBlock(index, "nonce", Number(e.target.value))
-                  }
-                  className="bg-amber-50 border-2 p-2 border-gray-400 rounded-xl w-full"
-                />
-              </label>
-
-              <label>
-                Previous Hash:
-                <input
-                  readOnly
-                  value={block.previousHash}
-                  className="bg-amber-50 border-2 p-2 border-gray-400 rounded-xl w-full"
-                />
-              </label>
-
-              <label>
-                Hash:
-                <input
-                  readOnly
-                  value={block.hash}
-                  className="bg-amber-50 border-2 p-2 border-gray-400 rounded-xl w-full"
-                />
-              </label>
-
-              <button
-                onClick={() => mineAtIndex(index)}
-                className="mt-2 bg-green-700 text-white py-1 rounded"
-              >
-                Mine Block
-              </button>
-            </div>
+            <Block block={block} onUpdate={(snapshot) =>
+              handleBlockUpdate(index, snapshot)
+            } showHeader={false} />
           </div>
-        );
+        )
       })}
 
       <button
@@ -184,7 +103,7 @@ export default function Blockchain() {
       >
         Add Block
       </button>
-    </div>
+    </div >
   );
 }
 

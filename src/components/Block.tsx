@@ -6,14 +6,26 @@ import { sha256 } from "../utils/hash";
 const DIFFICULTY = 4;
 const GENESIS_PREV_HASH = "0".repeat(64);
 
+export type BlockSnapshot = {
+  blockNo: number
+  nonce: number
+  data: string
+  previousHash: string
+  hash: string
+}
 export type blockDataType = {
   blockNo: number;
   nonce: number;
   data: string;
   previousHash: string;
+  hash?: string;
 }
 
-export default function Block({ block }: { block: blockDataType }) {
+export default function Block({ block, onUpdate, showHeader }: {
+  block: blockDataType,
+  onUpdate?: (snapshot: BlockSnapshot) => void,
+  showHeader?: boolean
+}) {
   const [blockNo, setBlockNo] = useState<number>(block.blockNo || 1);
   const [nonce, setNonce] = useState<number>(block.nonce || 0);
   const [data, setData] = useState<string>(block.data || "");
@@ -67,11 +79,29 @@ export default function Block({ block }: { block: blockDataType }) {
     setHash(minedHash);
   };
 
+  useEffect(() => {
+    if (!onUpdate) {
+      return
+    }
+    onUpdate({
+      blockNo,
+      nonce,
+      data,
+      previousHash,
+      hash,
+    })
+  }, [blockNo, nonce, data, hash])
+
   return (
     <div className="flex flex-col rounded-sm p-4 m-auto max-w-md">
-      <h1 className="text-center font-bold text-lg">
-        Block (Difficulty: {DIFFICULTY})
-      </h1>
+      {showHeader ?
+        <h1 className="text-center font-bold text-lg">
+          Block (Difficulty: {DIFFICULTY})
+        </h1>
+        :
+        <></>
+      }
+
 
       <div className="flex flex-col gap-3 text-sm">
         <label>

@@ -9,7 +9,7 @@ import { Transaction } from "./Transaction";
 type ActiveView = "hash" | "block" | "blockchain" | "transaction";
 
 export default function Home() {
-  const [activeView, setActiveView] = useState<ActiveView>("block");
+  const [activeView, setActiveView] = useState<ActiveView>("blockchain");
 
   const renderComponent = () => {
     switch (activeView) {
