@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { mineBlock } from "../utils/mineBlock";
 import { sha256 } from "../utils/hash";
 
@@ -12,6 +12,14 @@ export default function Block() {
   const [data, setData] = useState<string>("");
   const [previousHash] = useState<string>(GENESIS_PREV_HASH);
   const [hash, setHash] = useState<string>("");
+
+  useEffect(() => {
+    if (data == "") {
+      return
+    }
+    const input = `${blockNo}${nonce}${data}${previousHash}`;
+    const result = sha256(input).then((data) => setHash(data))
+  }, [data])
 
   const handleChange = async (
     e: React.ChangeEvent<any>
@@ -48,7 +56,6 @@ export default function Block() {
         DIFFICULTY,
         nonce
       );
-
     setNonce(minedNonce);
     setHash(minedHash);
   };
@@ -84,12 +91,10 @@ export default function Block() {
 
         <label>
           Data:
-          <textarea
-            id="data"
-            value={data}
-            onChange={handleChange}
-            className="bg-amber-50 border-2 p-2 border-gray-400 rounded-xl w-full"
-          />
+          <div id="transactins" className="flex flex-col bg-amber-50 border-2 py-4 border-gray-400 rounded-xl w-full">
+            <Tx setData={setData} />
+            <Tx setData={setData} />
+          </div>
         </label>
 
 
@@ -117,8 +122,46 @@ export default function Block() {
         >
           Mine Block
         </button>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }
+function Tx({ setData }: { setData: any }) {
+  type tx = { amount: number, from: string, to: string }
+  const [tx, setTx] = useState<tx>({ amount: 0, from: "address1", to: "address2" })
+  const handleTxChanges = async (
+    e: React.ChangeEvent<any>
+  ) => {
+    const element = e.target.id;
+    const value = e.target.value;
+    setTx(values => ({ ...values, [element]: value }))
+    const input = `${tx.amount}${tx.from}${tx.to}`
+    console.log(input);
+    setData(input)
+  }
+  return (
+    <div className="flex w-full justify-around items-center">
+      Amount:&nbsp; <input
+        id="amount"
+        onChange={handleTxChanges}
+        className="border w-18 py-1 pl-0.5 bg-gray-300 rounded"
+        value={tx.amount}
+        type="number" />
+      From:&nbsp; <input
+        id="from"
+        onChange={handleTxChanges}
+        className="border py-1 pl-0.5 bg-gray-300 rounded"
+        value={tx.from}
+        size={5}
+        type="text" />
 
+      TO:&nbsp; <input
+        id="to"
+        onChange={handleTxChanges}
+        className="border py-1 pl-0.5 bg-gray-300 rounded "
+        value={tx.to}
+        size={5}
+        type="text" />
+    </div >
+  )
+}
