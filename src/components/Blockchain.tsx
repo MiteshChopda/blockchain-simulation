@@ -42,6 +42,24 @@ export default function Blockchain() {
     ]);
   };
 
+  const removeBlock = (index: number) => {
+    // prevent deleting Genesis block
+    if (index === 0) return;
+
+    const updated = chain.filter((_, i) => i !== index);
+
+    // re-number and fix previousHash
+    const fixed = updated.map((block, i) => ({
+      ...block,
+      blockNo: i + 1,
+      previousHash:
+        i === 0 ? GENESIS_PREV_HASH : updated[i - 1].hash,
+    }));
+
+    setChain(fixed);
+  };
+
+
   // FULL chain validation (includes difficulty)
   const validateChain = async (): Promise<boolean[]> => {
     const results: boolean[] = [];
@@ -77,24 +95,37 @@ export default function Blockchain() {
         Blockchain (Difficulty: {DIFFICULTY})
       </h1>
 
+
       {chain.map((block, index) => {
         const valid = validity[index];
-        return (
 
-          < div
+        return (
+          <div
             key={index}
             className={`rounded-3xl ${valid
               ? "bg-green-100 border-transparent"
               : "bg-red-100 border-transparent"
+              }`}>
+            <Block
+              block={block}
+              onUpdate={(snapshot) =>
+                handleBlockUpdate(index, snapshot)
               }
-              }`
-            }
-          >
-            <Block block={block} onUpdate={(snapshot) =>
-              handleBlockUpdate(index, snapshot)
-            } showHeader={false} />
+              showHeader={false}
+            />
+
+            {index !== 0 && (
+              <div className="flex justify-center pb-4">
+                <button
+                  onClick={() => removeBlock(index)}
+                  className="px-4 py-1 bg-red-400 text-white rounded"
+                >
+                  Remove Block
+                </button>
+              </div>
+            )}
           </div>
-        )
+        );
       })}
 
       <button
