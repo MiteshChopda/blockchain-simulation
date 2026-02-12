@@ -1,5 +1,10 @@
 
-type View = "landing" | "hash" | "block" | "blockchain" | "transaction";
+type View =
+  | "landing"
+  | "hash"
+  | "block"
+  | "blockchain"
+  | "transaction";
 
 type NavbarProps = {
   active: View;
@@ -10,10 +15,12 @@ export default function Navbar({ active, onSelect }: NavbarProps) {
   const navItems: { label: string; view: View }[] = [
     { label: "Home", view: "landing" },
     { label: "Hash", view: "hash" },
-    { label: "Transaction", view: "transaction" },
     { label: "Block", view: "block" },
     { label: "Blockchain", view: "blockchain" },
+    { label: "Transaction", view: "transaction" },
   ];
+
+  const githubUrl = "https://github.com/MiteshChopda/blockchain-simulation"// placeholder
 
   return (
     <nav className="sticky top-0 z-50 backdrop-blur-md bg-gray-900/80 border-b border-gray-800 shadow-lg">
@@ -52,6 +59,19 @@ export default function Navbar({ active, onSelect }: NavbarProps) {
                 </button>
               );
             })}
+
+            {/* Divider */}
+            <div className="h-6 w-px bg-gray-700 mx-2" />
+
+            {/* GitHub Link */}
+            <a
+              href={githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className=" py-2 text-sm font-medium rounded-lg text-gray-300 hover:text-white hover:bg-gray-800 transition-all duration-200"
+            >
+              GitHub
+            </a>
 
           </div>
         </div>
