@@ -15,9 +15,9 @@ export default function Navbar({ active, onSelect }: NavbarProps) {
   const navItems: { label: string; view: View }[] = [
     { label: "Home", view: "landing" },
     { label: "Hash", view: "hash" },
+    { label: "Transaction", view: "transaction" },
     { label: "Block", view: "block" },
     { label: "Blockchain", view: "blockchain" },
-    { label: "Transaction", view: "transaction" },
   ];
 
   const githubUrl = "https://github.com/MiteshChopda/blockchain-simulation"// placeholder
