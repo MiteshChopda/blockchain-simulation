@@ -31,7 +31,7 @@ export default function Home() {
 
   return (
     <>
-      <Navbar onSelect={setActiveView} />
+      <Navbar onSelect={setActiveView} active={activeView} />
       <main className="p-4">
         {renderComponent()}
       </main>
