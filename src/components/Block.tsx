@@ -6,6 +6,7 @@ import { sha256 } from "../utils/hash";
 const DIFFICULTY = 4;
 const GENESIS_PREV_HASH = "0".repeat(64);
 
+type tx = { amount: number, from: string, to: string }
 export type BlockSnapshot = {
   blockNo: number
   nonce: number
@@ -30,15 +31,15 @@ export default function Block({ block, onUpdate, showHeader }: {
   const [nonce, setNonce] = useState<number>(block.nonce || 0);
   const [data, setData] = useState<string>(block.data || "");
   const [previousHash] = useState<string>(block.previousHash || GENESIS_PREV_HASH);
-  const [hash, setHash] = useState<string>("");
+  const [hash, setHash] = useState<string>(block.hash || "");
 
   useEffect(() => {
-    if (data == "") {
+    if (data === "") {
       return
     }
     const input = `${blockNo}${nonce}${data}${previousHash}`;
     sha256(input).then((data) => setHash(data))
-  }, [data])
+  }, [data, nonce, data, previousHash])
 
   const handleChange = async (
     e: React.ChangeEvent<any>
@@ -60,7 +61,11 @@ export default function Block({ block, onUpdate, showHeader }: {
         break;
     }
 
-    const input = `${blockNo}${nonce}${data}${previousHash}`;
+    const newBlockNo = element === "blockNo" ? Number(value) : blockNo;
+    const newNonce = element === "nonce" ? Number(value) : nonce;
+    const newData = element === "data" ? value : data;
+
+    const input = `${newBlockNo}${newNonce}${newData}${previousHash}`;
     const result = await sha256(input);
     setHash(result);
   };
@@ -128,7 +133,7 @@ export default function Block({ block, onUpdate, showHeader }: {
 
         <label>
           Data:
-          <div id="transactins" className="flex flex-col bg-amber-50 border-2 py-4 border-gray-400 rounded-xl w-full">
+          <div id="transaction" className="flex flex-col bg-amber-50 border-2 py-4 border-gray-400 rounded-xl w-full">
             <Tx setData={setData} />
             <Tx setData={setData} />
           </div>
@@ -164,17 +169,16 @@ export default function Block({ block, onUpdate, showHeader }: {
   );
 }
 function Tx({ setData }: { setData: any }) {
-  type tx = { amount: number, from: string, to: string }
   const [tx, setTx] = useState<tx>({ amount: 0, from: "address1", to: "address2" })
   const handleTxChanges = async (
     e: React.ChangeEvent<any>
   ) => {
     const element = e.target.id;
     const value = e.target.value;
-    setTx(values => ({ ...values, [element]: value }))
-    const input = `${tx.amount}${tx.from}${tx.to}`
-    console.log(input);
-    setData(input)
+
+    const updatedTx = { ...tx, [element]: value };
+    setTx(updatedTx);
+    setData(JSON.stringify(updatedTx));
   }
   return (
     <div className="flex w-full justify-around items-center">
