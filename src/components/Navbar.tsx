@@ -10,12 +10,13 @@ export default function Navbar({ active, onSelect }: NavbarProps) {
   const navItems: { label: string; view: View }[] = [
     { label: "Home", view: "landing" },
     { label: "Hash", view: "hash" },
+    { label: "Transaction", view: "transaction" },
     { label: "Block", view: "block" },
     { label: "Blockchain", view: "blockchain" },
   ];
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-md bg-gray-900/80 border-b border-gray-700 shadow-lg">
+    <nav className="sticky top-0 z-50 backdrop-blur-md bg-gray-900/80 border-b border-gray-800 shadow-lg">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-16">
 
@@ -45,9 +46,8 @@ export default function Navbar({ active, onSelect }: NavbarProps) {
                 >
                   {item.label}
 
-                  {/* subtle animated underline */}
                   {isActive && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-white rounded-full"></span>
+                    <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-white rounded-full"></span>
                   )}
                 </button>
               );
