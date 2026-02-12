@@ -30,7 +30,7 @@ export default function Block({ block, onUpdate, showHeader }: {
   const [blockNo, setBlockNo] = useState<number>(block.blockNo || 1);
   const [nonce, setNonce] = useState<number>(block.nonce || 0);
   const [data, setData] = useState<string>(block.data || "");
-  const [previousHash] = useState<string>(block.previousHash || GENESIS_PREV_HASH);
+  const [previousHash, setPreviousHash] = useState<string>(block.previousHash || GENESIS_PREV_HASH);
   const [hash, setHash] = useState<string>(block.hash || "");
 
   useEffect(() => {
@@ -56,6 +56,9 @@ export default function Block({ block, onUpdate, showHeader }: {
         break
       case "data":
         setData(value)
+        break
+      case "previousHash":
+        setPreviousHash(value)
         break
       default:
         break;
@@ -143,8 +146,9 @@ export default function Block({ block, onUpdate, showHeader }: {
         <label>
           Previous Hash:
           <input
-            readOnly
+            id="previousHash"
             value={previousHash}
+            onChange={handleChange}
             className="bg-amber-50 border-2 p-2 border-gray-400 rounded-xl w-full"
           />
         </label>
