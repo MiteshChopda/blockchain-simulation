@@ -1,81 +1,67 @@
 
 import { useEffect, useState } from "react";
+import Block, { type BlockSnapshot } from "./Block";
 import { sha256 } from "../utils/hash";
-import { mineBlock } from "../utils/mineBlock";
-
-type Block = {
-  blockNo: number;
-  nonce: number;
-  data: string;
-  hash: string;
-  previousHash: string;
-};
 
 const DIFFICULTY = 4;
 const GENESIS_PREV_HASH = "0".repeat(64);
 
+
+
 export default function Blockchain() {
-  const [chain, setChain] = useState<Block[]>([
+  const [chain, setChain] = useState<BlockSnapshot[]>([
     {
       blockNo: 1,
-      nonce: 0,
       data: "Genesis Block",
+      nonce: 69,
       previousHash: GENESIS_PREV_HASH,
       hash: "",
     },
   ]);
 
-  // add new block
+  const handleBlockUpdate = (index: number, snapshot: BlockSnapshot) => {
+    const updated = [...chain];
+    updated[index] = snapshot;
+
+    for (let i = index + 1; i < updated.length; i++) {
+      updated[i] = {
+        ...updated[i],
+        previousHash: updated[i - 1].hash,
+      };
+    }
+
+    setChain(updated);
+  };
+
   const addBlock = () => {
     const last = chain[chain.length - 1];
+
     setChain([
       ...chain,
       {
         blockNo: chain.length + 1,
         nonce: 0,
         data: "",
-        previousHash: last.hash,
+        previousHash: last.hash || GENESIS_PREV_HASH,
         hash: "",
       },
     ]);
   };
 
-  // update editable fields
-  const updateBlock = (
-    index: number,
-    field: "data" | "nonce",
-    value: string | number
-  ) => {
-    const updated = [...chain];
-    // @ts-expect-error controlled
-    updated[index][field] = value;
-    setChain(updated);
+  const removeBlock = (index: number) => {
+    if (index === 0) return;
+
+    const updated = chain.filter((_, i) => i !== index);
+
+    const fixed = updated.map((block, i) => ({
+      ...block,
+      blockNo: i + 1,
+      previousHash: i === 0 ? GENESIS_PREV_HASH : updated[i - 1].hash,
+    }));
+
+    setChain(fixed);
   };
 
-  // mine a specific block
-  const mineAtIndex = async (index: number) => {
-    const block = chain[index];
-
-    const { nonce, hash } = await mineBlock(
-      block.blockNo,
-      block.data,
-      block.previousHash,
-      DIFFICULTY,
-      block.nonce
-    );
-
-    const updated = [...chain];
-    updated[index] = { ...block, nonce, hash };
-
-    // propagate previousHash forward
-    for (let i = index + 1; i < updated.length; i++) {
-      updated[i].previousHash = updated[i - 1].hash;
-    }
-
-    setChain(updated);
-  };
-
-  // FULL chain validation (includes difficulty)
   const validateChain = async (): Promise<boolean[]> => {
     const results: boolean[] = [];
     let broken = false;
@@ -86,7 +72,7 @@ export default function Blockchain() {
       const input = `${b.blockNo}${b.nonce}${b.data}${b.previousHash}`;
       const expectedHash = await sha256(input);
 
-      let valid =
+      const valid =
         b.hash === expectedHash &&
         b.hash.startsWith(target) &&
         (i === 0 || b.previousHash === chain[i - 1].hash);
@@ -105,82 +91,51 @@ export default function Blockchain() {
   }, [chain]);
 
   return (
-    <div className="flex flex-col gap-4 p-4 m-auto">
-      <h1 className="text-center font-bold text-lg">
+    <div className="flex flex-col gap-6 p-6">
+
+      <h1 className="text-center text-xl font-bold">
         Blockchain (Difficulty: {DIFFICULTY})
       </h1>
 
-      {chain.map((block, index) => {
-        const valid = validity[index];
+      {/* Scrollable horizontal container */}
+      <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
 
-        return (
-          <div
-            key={index}
-            className={`p-4 border-2 rounded-3xl m-auto ${valid
-              ? "bg-green-100 border-transparent"
-              : "bg-red-100 border-transparent"
-              }`}
-          >
-            <h2 className="font-semibold mb-2">
-              Block #{block.blockNo}
-            </h2>
+        {chain.map((block, index) => {
+          const valid = validity[index];
 
-            <div className="flex flex-col gap-2 text-sm">
-              <label>
-                Data:
-                <textarea
-                  value={block.data}
-                  onChange={(e) =>
-                    updateBlock(index, "data", e.target.value)
-                  }
-                  className="bg-amber-50 border-2 p-2 border-gray-400 rounded-xl w-full"
-                />
-              </label>
+          return (
+            <div
+              key={index}
+              className={`min-w-[420px] flex-shrink-0 rounded-3xl transition-all duration-300 ${valid ? "bg-green-100" : "bg-red-100"
+                }`}
+            >
+              <Block
+                block={block}
+                onUpdate={(snapshot) =>
+                  handleBlockUpdate(index, snapshot)
+                }
+                showHeader={false}
+              />
 
-              <label>
-                Nonce:
-                <input
-                  type="number"
-                  value={block.nonce}
-                  onChange={(e) =>
-                    updateBlock(index, "nonce", Number(e.target.value))
-                  }
-                  className="bg-amber-50 border-2 p-2 border-gray-400 rounded-xl w-full"
-                />
-              </label>
-
-              <label>
-                Previous Hash:
-                <input
-                  readOnly
-                  value={block.previousHash}
-                  className="bg-amber-50 border-2 p-2 border-gray-400 rounded-xl w-full"
-                />
-              </label>
-
-              <label>
-                Hash:
-                <input
-                  readOnly
-                  value={block.hash}
-                  className="bg-amber-50 border-2 p-2 border-gray-400 rounded-xl w-full"
-                />
-              </label>
-
-              <button
-                onClick={() => mineAtIndex(index)}
-                className="mt-2 bg-green-700 text-white py-1 rounded"
-              >
-                Mine Block
-              </button>
+              {index !== 0 && (
+                <div className="flex justify-center pb-4">
+                  <button
+                    onClick={() => removeBlock(index)}
+                    className="px-4 py-1 bg-red-500 hover:bg-red-600 text-white rounded transition"
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+
+      </div>
 
       <button
         onClick={addBlock}
-        className="self-center px-4 py-2 bg-blue-700 text-white rounded"
+        className="self-center px-6 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded transition"
       >
         Add Block
       </button>
