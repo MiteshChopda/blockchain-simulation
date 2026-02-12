@@ -15,7 +15,7 @@ type ActiveView =
   | "transaction";
 
 export default function Home() {
-  const [activeView, setActiveView] = useState<ActiveView>("transaction");
+  const [activeView, setActiveView] = useState<ActiveView>("landing");
 
   const renderComponent = () => {
     switch (activeView) {
