@@ -24,7 +24,7 @@ export default function Navbar({ active, onSelect }: NavbarProps) {
 
   return (
     <nav className="sticky top-0 z-50 backdrop-blur-md bg-gray-900/80 border-b border-gray-800 shadow-lg">
-      <div className="p-6 max-w-7xl mx-auto px-6 md:p-0">
+      <div className="pt-6 max-w-7xl mx-auto px-6 md:pt-0">
         <div className="flex items-center justify-between flex-wrap h-16">
           {/* Logo */}
           <div className="text-white text-xl font-semibold tracking-wide">
