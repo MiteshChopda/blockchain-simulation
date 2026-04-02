@@ -64,15 +64,15 @@ export const Transaction = () => {
     setIsSigned(true);
     setIsValid(null); // reset validation
   };
-const verifySignature = async () => {
-  if (!tx.signature) {
-    setIsValid(false);
-    return;
-  }
+  const verifySignature = async () => {
+    if (!tx.signature) {
+      setIsValid(false);
+      return;
+    }
 
-  const expected = await sha256(`${tx.sender}${tx.txId}`);
-  setIsValid(tx.signature === expected);
-};
+    const expected = await sha256(`${tx.sender}${tx.txId}`);
+    setIsValid(tx.signature === expected);
+  };
   // for random address generation
   const generateSender = () => {
     setTx((prev) => ({
@@ -97,7 +97,7 @@ const verifySignature = async () => {
       <div className="flex flex-col gap-4 text-sm">
         <label>
           Sender:
-          <div className="flex gap-2">
+          <div className="flex sm:flex-row gap-2">
             <input
               id="sender"
               value={tx.sender}
