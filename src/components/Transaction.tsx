@@ -1,6 +1,6 @@
-
 import { useEffect, useState } from "react";
 import { sha256 } from "../utils/hash";
+import { generateAddress } from "../utils/address";
 
 type TransactionType = {
   sender: string;
@@ -62,6 +62,23 @@ export const Transaction = () => {
     }));
   };
 
+  // for random address generation
+const generateSender = () => {
+  setTx(prev => ({
+    ...prev,
+    sender: generateAddress(),
+    timestamp: new Date(),
+  }));
+};
+
+const generateReceiver = () => {
+  setTx(prev => ({
+    ...prev,
+    receiver: generateAddress(),
+    timestamp: new Date(),
+  }));
+};
+
   return (
     <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-2xl p-6 flex flex-col gap-5">
 
@@ -71,25 +88,41 @@ export const Transaction = () => {
 
       <div className="flex flex-col gap-4 text-sm">
 
-        <label>
-          Sender:
-          <input
-            id="sender"
-            value={tx.sender}
-            onChange={handleChange}
-            className="w-full p-2 mt-1 border rounded bg-amber-50"
-          />
-        </label>
+<label>
+  Sender:
+  <div className="flex gap-2">
+    <input
+      id="sender"
+      value={tx.sender}
+      onChange={handleChange}
+      className="w-full p-2 mt-1 border rounded bg-amber-50"
+    />
+    <button
+      onClick={generateSender}
+      className="px-3 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 text-xs"
+    >
+      Random
+    </button>
+  </div>
+</label>
 
-        <label>
-          Receiver:
-          <input
-            id="receiver"
-            value={tx.receiver}
-            onChange={handleChange}
-            className="w-full p-2 mt-1 border rounded bg-amber-50"
-          />
-        </label>
+<label>
+  Receiver:
+  <div className="flex gap-2">
+    <input
+      id="receiver"
+      value={tx.receiver}
+      onChange={handleChange}
+      className="w-full p-2 mt-1 border rounded bg-amber-50"
+    />
+    <button
+      onClick={generateReceiver}
+      className="px-3 py-2 bg-gray-700 text-white rounded hover:bg-gray-800 text-xs"
+    >
+      Random
+    </button>
+  </div>
+</label>
 
         <label>
           Amount:
