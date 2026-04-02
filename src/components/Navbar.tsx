@@ -25,7 +25,7 @@ export default function Navbar({ active, onSelect }: NavbarProps) {
   return (
     <nav className="sticky top-0 z-50 backdrop-blur-md bg-gray-900/80 border-b border-gray-800 shadow-lg">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between flex-wrap h-16">
 
           {/* Logo */}
           <div className="text-white text-xl font-semibold tracking-wide">
@@ -33,7 +33,7 @@ export default function Navbar({ active, onSelect }: NavbarProps) {
           </div>
 
           {/* Navigation */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wr[change]ap overflow-auto">
 
             {navItems.map((item) => {
               const isActive = active === item.view;

@@ -1,12 +1,9 @@
-
 import { useEffect, useState } from "react";
 import Block, { type BlockSnapshot } from "./Block";
 import { sha256 } from "../utils/hash";
 
 const DIFFICULTY = 4;
 const GENESIS_PREV_HASH = "0".repeat(64);
-
-
 
 export default function Blockchain() {
   const [chain, setChain] = useState<BlockSnapshot[]>([
@@ -92,28 +89,25 @@ export default function Blockchain() {
 
   return (
     <div className="flex flex-col gap-6 p-6">
-
       <h1 className="text-center text-xl font-bold">
         Blockchain (Difficulty: {DIFFICULTY})
       </h1>
 
       {/* Scrollable horizontal container */}
-      <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-
+      <div className="flex flex-col md:flex-row gap-6 md:overflow-x-auto pb-4">
         {chain.map((block, index) => {
           const valid = validity[index];
 
           return (
             <div
               key={index}
-              className={`min-w-[420px] flex-shrink-0 rounded-3xl transition-all duration-300 ${valid ? "bg-green-100" : "bg-red-100"
-                }`}
+              className={`md:min-w-[420px] md:flex-shrink-0 rounded-3xl transition-all duration-300 ${
+                valid ? "bg-green-100" : "bg-red-100"
+              }`}
             >
               <Block
                 block={block}
-                onUpdate={(snapshot) =>
-                  handleBlockUpdate(index, snapshot)
-                }
+                onUpdate={(snapshot) => handleBlockUpdate(index, snapshot)}
                 showHeader={false}
               />
 
@@ -130,7 +124,6 @@ export default function Blockchain() {
             </div>
           );
         })}
-
       </div>
 
       <button
@@ -142,4 +135,3 @@ export default function Blockchain() {
     </div>
   );
 }
-
